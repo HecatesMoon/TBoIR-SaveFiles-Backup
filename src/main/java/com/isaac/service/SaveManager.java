@@ -34,13 +34,14 @@ public class SaveManager {
             List<Path> filesToCopy = saveFiles.filter(file -> file.getFileName()
                                                         .toString()
                                                         .contains("persistentgamedata")).toList();
+            System.out.println("Making a backup...");
             for(Path file:filesToCopy){
                 copyFile(file, Config.getBackupPath());
             }
             return true;
         } 
         catch (IOException e) {
-            System.err.println("Failed trying to access folder: " + e.getMessage());
+            System.err.println("Failed trying to copy files from origin: " + e.getMessage());
             return false;
         }
         
