@@ -8,14 +8,18 @@ import com.isaac.service.SaveManager;
 
 public class CLI {
 
-    private boolean cliLoopRuns;
-    private Scanner scanner;
-    
+    private Config config;
+    private SaveManager saveManager;
+    private RestoreManager restoreManager;
+
+    private Scanner scanner = new Scanner(System.in);
+    private boolean cliLoopRuns = true;
     private boolean pathChangeLoop;
 
-    public CLI (){
-        this.cliLoopRuns = true;
-        this.scanner = new Scanner(System.in);
+    public CLI (Config config, SaveManager saveManager, RestoreManager restoreManager){
+        this.config = config;
+        this.saveManager = saveManager;
+        this.restoreManager = restoreManager;
     }
 
     public void cliLoop(){
@@ -37,39 +41,15 @@ public class CLI {
         scanner.close();
     };
 
-    private void printMenu(String whichMenu){
-        switch (whichMenu) {
-            case "main":
-                System.out.println("----------MENU----------");
-                System.out.println("1. Show current configured paths");
-                System.out.println("2. Backup the savefiles (from source to backup folder)");
-                System.out.println("3. Restore the savefiles (from backup to source folder)");
-                System.out.println("4. Change Paths");
-                System.out.println("5. Exit");
-                System.out.println("What do you want to do? (press the number and then enter)");
-                break;
-            case "paths":
-                System.out.println("----------MENU----------");
-                System.out.println("1. Change Origin Path");
-                System.out.println("2. Change Backup Path");
-                System.out.println("3. Exit Path Configuration");
-                System.out.println("What do you want to do? (press the number and then enter)");
-                break;
-            default:
-                System.out.println("Write a valid number");
-                break;
-        }
-    }
-
     private void menuOption(String choosenOption){
 
         switch (choosenOption) {
             case "1": //prints actual paths
-                System.out.println("Source Path: " + Config.getOriginPath().toString());
-                System.out.println("Backup Path: " + Config.getBackupPath().toString());
+                System.out.println("Source Path: " + config.getOriginPath().toString());
+                System.out.println("Backup Path: " + config.getBackupPath().toString());
                 break;
             case "2": // backups data
-                if (SaveManager.backup()){
+                if (saveManager.backup()){
                     System.out.println("Backup Done!");
                 } else {
                     System.err.println("Backup failed!");
@@ -77,7 +57,7 @@ public class CLI {
                 
                 break;
             case "3": // restores backup
-                if (RestoreManager.restore()){
+                if (restoreManager.restore()){
                     System.out.println("Savefiles restored from backup!");
                 } else {
                     System.err.println("Restoring failed");
@@ -103,8 +83,8 @@ public class CLI {
         while(pathChangeLoop){
 
             System.out.println("------CHANGE PATHS------");
-            System.out.println("Origin Path:" + Config.getOriginPath());
-            System.out.println("Backup Path:" + Config.getBackupPath());
+            System.out.println("Origin Path:" + config.getOriginPath());
+            System.out.println("Backup Path:" + config.getBackupPath());
             printMenu("paths");
 
             System.out.print("> ");
@@ -123,9 +103,9 @@ public class CLI {
             case "1":// changes origin path
                 System.out.println("Input the path you want to use for origin");
                 System.out.print(">");
-                if (Config.setOriginPath(this.scanner.nextLine().trim())){
+                if (config.setOriginPath(this.scanner.nextLine().trim())){
                     System.out.println("The origin path was changed succesfully");
-                    System.out.println(Config.getOriginPath());
+                    System.out.println(config.getOriginPath());
                 } else {
                     System.out.println("The path couldn't be changed, the path does not exist or is not writeable");
                 }
@@ -133,9 +113,9 @@ public class CLI {
             case "2":// changes backup path
                 System.out.println("Input the path you want to use for backup");
                 System.out.print(">");
-                if (Config.setBackupPath(this.scanner.nextLine().trim())){
+                if (config.setBackupPath(this.scanner.nextLine().trim())){
                     System.out.println("The backup path was changed succesfully");
-                    System.out.println(Config.getBackupPath());
+                    System.out.println(config.getBackupPath());
                 } else {
                     System.out.println("The path couldn't be changed, the path does not exist or is not writeable");
                 }
@@ -149,6 +129,30 @@ public class CLI {
                 break;
         }
 
+    }
+
+    private void printMenu(String whichMenu){
+        switch (whichMenu) {
+            case "main":
+                System.out.println("----------MENU----------");
+                System.out.println("1. Show current configured paths");
+                System.out.println("2. Backup the savefiles (from source to backup folder)");
+                System.out.println("3. Restore the savefiles (from backup to source folder)");
+                System.out.println("4. Change Paths");
+                System.out.println("5. Exit");
+                System.out.println("What do you want to do? (press the number and then enter)");
+                break;
+            case "paths":
+                System.out.println("----------MENU----------");
+                System.out.println("1. Change Origin Path");
+                System.out.println("2. Change Backup Path");
+                System.out.println("3. Exit Path Configuration");
+                System.out.println("What do you want to do? (press the number and then enter)");
+                break;
+            default:
+                System.out.println("Write a valid number");
+                break;
+        }
     }
 
     private void clearConsole(){

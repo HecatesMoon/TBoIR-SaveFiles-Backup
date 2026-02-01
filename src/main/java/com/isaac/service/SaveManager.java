@@ -10,19 +10,26 @@ import java.util.stream.Stream;
 import com.isaac.Config;
 
 public class SaveManager {
-    public static boolean backup(){
+
+    private Config config;
+
+    public SaveManager (Config config){
+        this.config = config;
+    }
+
+    public boolean backup(){
 
         //Validates if origin folder exists
-        if (!Files.exists(Config.getOriginPath())){
-            System.err.println("Origin folder not found: " + Config.getOriginPath());
+        if (!Files.exists(config.getOriginPath())){
+            System.err.println("Origin folder not found: " + config.getOriginPath());
             return false;
         }
 
         //Validates if backup folder exists, if it doesn't, it creates it
-        if (!Files.exists(Config.getBackupPath())){
+        if (!Files.exists(config.getBackupPath())){
             try {
-                Files.createDirectories(Config.getBackupPath());
-                System.out.println("Directory created: " + Config.getBackupPath());
+                Files.createDirectories(config.getBackupPath());
+                System.out.println("Directory created: " + config.getBackupPath());
             } catch (IOException e) {
                 System.err.println("Failed creating backup directory: " + e.getMessage());
                 return false;
@@ -30,13 +37,13 @@ public class SaveManager {
         }
 
         //Copies each file from origin folder to the backup folder, applying filters
-        try (Stream<Path> saveFiles = Files.walk(Config.getOriginPath(), 1)) {
+        try (Stream<Path> saveFiles = Files.walk(config.getOriginPath(), 1)) {
             List<Path> filesToCopy = saveFiles.filter(file -> file.getFileName()
                                                         .toString()
                                                         .contains("persistentgamedata")).toList();
             System.out.println("Making a backup...");
             for(Path file:filesToCopy){
-                copyFile(file, Config.getBackupPath());
+                copyFile(file, config.getBackupPath());
             }
             return true;
         } 

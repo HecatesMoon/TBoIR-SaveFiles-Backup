@@ -9,8 +9,8 @@ import java.util.Properties;
 
 public class Config {
 
-    private static Properties configs = new Properties();
-    private static final Path CONFIG_FILE = Path.of("config.properties");
+    private final Properties configs = new Properties();
+    private final Path CONFIG_FILE;
 
     private static final String USER_HOME = System.getProperty("user.home");
     private static final String BASE_DIR = System.getProperty("user.dir");
@@ -23,15 +23,21 @@ public class Config {
     private static final Path DEFAULT_ORIGIN_PATH = defaultOriginPath();
     private static final Path DEFAULT_BACKUP_PATH = Path.of(BASE_DIR, "Isaac-Backups");
     
-    private static Path ORIGIN_PATH;
-    private static Path BACKUP_PATH;
+    private Path ORIGIN_PATH;
+    private Path BACKUP_PATH;
 
-    static{
+    public Config (){
+        this.CONFIG_FILE = Path.of("config.properties");
+        init();
+    }
+
+    public Config (Path configFile){
+        this.CONFIG_FILE = configFile;
         init();
     }
 
     //method that setups a fis and loads the properties from a config file
-    private static void loadProperties (){
+    private void loadProperties (){
         try (FileInputStream fis = new FileInputStream(CONFIG_FILE.toFile())){
             configs.load(fis);
         } catch (IOException e){
@@ -39,7 +45,7 @@ public class Config {
         }
     }
     //method that setups a fos and saves the properties in a config file
-    private static void storeProperties(){
+    private void storeProperties(){
         try (FileOutputStream fos = new FileOutputStream(CONFIG_FILE.toFile())) {
             configs.store(fos, "Basic paths configs for Isaac Backup");
         } catch (IOException e) {
@@ -48,7 +54,7 @@ public class Config {
     }
 
     //Uses a init method to read the config file and have access to the setted paths, if there is no file, it uses default paths and creates a file
-    private static void init(){
+    private void init(){
 
         if (!Files.exists(CONFIG_FILE)){
             configs.setProperty("ORIGIN_PATH", DEFAULT_ORIGIN_PATH.toString());
@@ -84,7 +90,7 @@ public class Config {
     }
 
 
-    public static boolean setOriginPath(String newOriginPath) {
+    public boolean setOriginPath(String newOriginPath) {
 
         Path newPath = Path.of(newOriginPath);
 
@@ -98,7 +104,7 @@ public class Config {
         }
     }
 
-    public static boolean setBackupPath(String newBackupPath) {
+    public boolean setBackupPath(String newBackupPath) {
         Path newPath = Path.of(newBackupPath);
 
         if (newPath.toFile().isDirectory() && Files.isWritable(newPath)){
@@ -111,10 +117,10 @@ public class Config {
         }
     }
 
-    public static Path getOriginPath() {
+    public Path getOriginPath() {
         return ORIGIN_PATH;
     }
-    public static Path getBackupPath() {
+    public Path getBackupPath() {
         return BACKUP_PATH;
     }
 
