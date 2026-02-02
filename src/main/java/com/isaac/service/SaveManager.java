@@ -3,7 +3,6 @@ package com.isaac.service;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -40,10 +39,11 @@ public class SaveManager {
         try (Stream<Path> saveFiles = Files.walk(config.getOriginPath(), 1)) {
             List<Path> filesToCopy = saveFiles.filter(file -> file.getFileName()
                                                         .toString()
-                                                        .contains("persistentgamedata")).toList();
+                                                        .contains("persistentgamedata"))
+                                                        .toList();
             System.out.println("Making a backup...");
             for(Path file:filesToCopy){
-                copyFile(file, config.getBackupPath());
+                IOUtils.copyFile(file, config.getBackupPath());
             }
             return true;
         } 
@@ -51,13 +51,6 @@ public class SaveManager {
             System.err.println("Failed trying to copy files from origin: " + e.getMessage());
             return false;
         }
-        
-    }
-
-    private static void copyFile(Path sourceFile, Path destinationPath) throws IOException{
-        
-            Path filePath = destinationPath.resolve(sourceFile.getFileName());
-            Files.copy(sourceFile, filePath, StandardCopyOption.REPLACE_EXISTING);
         
     }
 }

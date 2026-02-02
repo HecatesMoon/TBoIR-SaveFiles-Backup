@@ -3,7 +3,6 @@ package com.isaac.service;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -34,7 +33,7 @@ public class RestoreManager {
             List<Path> filesToCopy = saveFiles.filter(Files::isRegularFile).toList();
             System.out.println("Restoring from backup...");
             for (Path file : filesToCopy) {
-                copyFile(file, config.getOriginPath());
+                IOUtils.copyFile(file, config.getOriginPath());
             }
                      
             return true;
@@ -44,8 +43,4 @@ public class RestoreManager {
         }
     }
 
-    private static void copyFile(Path sourceFile, Path destinationPath) throws IOException{
-            Path filePath = destinationPath.resolve(sourceFile.getFileName());
-            Files.copy(sourceFile, filePath, StandardCopyOption.REPLACE_EXISTING);
-    }
 }
