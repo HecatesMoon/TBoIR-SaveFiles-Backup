@@ -36,14 +36,16 @@ public class SaveManager {
         }
 
         //Copies each file from origin folder to the backup folder, applying filters
-        try (Stream<Path> saveFiles = Files.walk(config.getOriginPath(), 1)) {
-            List<Path> filesToCopy = saveFiles.filter(file -> file.getFileName()
-                                                        .toString()
-                                                        .contains("persistentgamedata"))
-                                                        .toList();
+        try (Stream<Path> saveFiles = Files.walk(config.getOriginPath(), 2)) {
+            List<Path> filesToCopy = saveFiles.filter(IOUtils::isTBoIFile).toList();
             System.out.println("Making a backup...");
             for(Path file:filesToCopy){
-                IOUtils.copyFile(file, config.getBackupPath());
+                if (Files.isDirectory(file)){
+                    Path folderInBackup = config.getBackupPath().resolve(file.getFileName());
+                    Files.createDirectories(folderInBackup);
+                } else if (Files.isRegularFile(file)){
+                    IOUtils.copyFile( config.getOriginPath(), file, config.getBackupPath());
+                }
             }
             return true;
         } 
@@ -51,6 +53,5 @@ public class SaveManager {
             System.err.println("Failed trying to copy files from origin: " + e.getMessage());
             return false;
         }
-        
     }
 }

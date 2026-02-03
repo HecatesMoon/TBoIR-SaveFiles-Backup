@@ -29,11 +29,16 @@ public class RestoreManager {
             return false;
         }
         //Copies each file from backup folder to origin folder
-        try (Stream<Path> saveFiles = Files.walk(config.getBackupPath(),1)) {
-            List<Path> filesToCopy = saveFiles.filter(Files::isRegularFile).toList();
+        try (Stream<Path> saveFiles = Files.walk(config.getBackupPath(),2)) {
+            List<Path> filesToCopy = saveFiles.filter(IOUtils::isTBoIFile).toList();
             System.out.println("Restoring from backup...");
             for (Path file : filesToCopy) {
-                IOUtils.copyFile(file, config.getOriginPath());
+                if (Files.isDirectory(file)){
+                    Path folderInOrigin = config.getOriginPath().resolve(file.getFileName());
+                    Files.createDirectories(folderInOrigin);
+                } else if (Files.isRegularFile(file)){
+                    IOUtils.copyFile(config.getBackupPath(), file, config.getOriginPath());
+                }
             }
                      
             return true;
