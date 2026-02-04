@@ -16,19 +16,28 @@ public class SaveManager {
         this.config = config;
     }
 
-    public boolean backup(){
+    public boolean backup(GameVersion version){
+
+        Path finalOriginPath;
+        if ((version == GameVersion.REPENTANCE || version == GameVersion.REPENTANCE_PLUS) && Config.isLinux){
+            finalOriginPath = config.getOriginPath().resolve(config.getProtonPath().resolve(version.getFolderName()));
+        } else {
+            finalOriginPath = config.getOriginPath().resolve(version.getFolderName());
+        }
+
+        Path finalBackupPath = config.getBackupPath().resolve(version.getFolderName());
 
         //Validates if origin folder exists
-        if (!Files.exists(config.getOriginPath())){
-            System.err.println("Origin folder not found: " + config.getOriginPath());
+        if (!Files.exists(finalOriginPath)){
+            System.err.println("Origin folder not found: " + finalOriginPath);
             return false;
         }
 
         //Validates if backup folder exists, if it doesn't, it creates it
-        if (!Files.exists(config.getBackupPath())){
+        if (!Files.exists(finalBackupPath)){
             try {
-                Files.createDirectories(config.getBackupPath());
-                System.out.println("Directory created: " + config.getBackupPath());
+                Files.createDirectories(finalBackupPath);
+                System.out.println("Directory created: " + finalBackupPath);
             } catch (IOException e) {
                 System.err.println("Failed creating backup directory: " + e.getMessage());
                 return false;
@@ -36,15 +45,16 @@ public class SaveManager {
         }
 
         //Copies each file from origin folder to the backup folder, applying filters
-        try (Stream<Path> saveFiles = Files.walk(config.getOriginPath(), 2)) {
+        try (Stream<Path> saveFiles = Files.walk(finalOriginPath, 2)) {
             List<Path> filesToCopy = saveFiles.filter(IOUtils::isTBoIFile).toList();
             System.out.println("Making a backup...");
+            //todo: add trycatch to create directory
             for(Path file:filesToCopy){
                 if (Files.isDirectory(file)){
-                    Path folderInBackup = config.getBackupPath().resolve(file.getFileName());
+                    Path folderInBackup = finalBackupPath.resolve(file.getFileName());
                     Files.createDirectories(folderInBackup);
                 } else if (Files.isRegularFile(file)){
-                    IOUtils.copyFile( config.getOriginPath(), file, config.getBackupPath());
+                    IOUtils.copyFile( finalOriginPath, file, finalBackupPath);
                 }
             }
             return true;

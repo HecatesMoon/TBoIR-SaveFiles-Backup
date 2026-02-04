@@ -80,15 +80,14 @@ public class Config {
         }else if (isLinux){
             String linuxHome = System.getenv("XDG_DATA_HOME");
             if (linuxHome != null){
-                return Path.of(linuxHome, "Steam", "steamapps", "compatdata", "250900", "pfx", "drive_c", "users", "steamuser", "Documents", "My Games");
+                return Path.of(linuxHome);
             } else {
-                return Path.of(USER_HOME, ".local","share", "Steam", "steamapps", "compatdata", "250900", "pfx", "drive_c", "users", "steamuser", "Documents", "My Games");
+                return Path.of(USER_HOME, ".local","share");
             }
         } 
 
         throw new UnsupportedOperationException("Unsupported Operative System " + OS_NAME);
     }
-
 
     public boolean setOriginPath(String newOriginPath) {
 
@@ -122,6 +121,10 @@ public class Config {
     }
     public Path getBackupPath() {
         return BACKUP_PATH;
+    }
+
+    public Path getProtonPath(){
+        return Path.of("Steam", "steamapps", "compatdata", "250900", "pfx", "drive_c", "users", "steamuser", "Documents", "My Games");
     }
 
     

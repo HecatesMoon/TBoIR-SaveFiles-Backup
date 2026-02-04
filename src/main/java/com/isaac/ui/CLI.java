@@ -3,6 +3,7 @@ package com.isaac.ui;
 import java.util.Scanner;
 
 import com.isaac.Config;
+import com.isaac.service.GameVersion;
 import com.isaac.service.RestoreManager;
 import com.isaac.service.SaveManager;
 
@@ -49,7 +50,7 @@ public class CLI {
                 System.out.println("Backup Path: " + config.getBackupPath().toString());
                 break;
             case "2": // backups data
-                if (saveManager.backup()){
+                if (saveManager.backup(GameVersion.REPENTANCE_PLUS)){
                     System.out.println("Backup Done!");
                 } else {
                     System.err.println("Backup failed!");
@@ -57,7 +58,7 @@ public class CLI {
                 
                 break;
             case "3": // restores backup
-                if (restoreManager.restore()){
+                if (restoreManager.restore(GameVersion.REPENTANCE_PLUS)){
                     System.out.println("Savefiles restored from backup!");
                 } else {
                     System.err.println("Restoring failed");
