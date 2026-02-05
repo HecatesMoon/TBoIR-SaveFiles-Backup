@@ -43,11 +43,15 @@ public class SaveManager {
         try (Stream<Path> saveFiles = Files.walk(finalOriginPath, 2)) {
             List<Path> filesToCopy = saveFiles.filter(IOUtils::isTBoIFile).toList();
             System.out.println("Making a backup...");
-            //todo: add trycatch to create directory
             for(Path file:filesToCopy){
                 if (Files.isDirectory(file)){
                     Path folderInBackup = finalBackupPath.resolve(file.getFileName());
-                    Files.createDirectories(folderInBackup);
+                    try {
+                        Files.createDirectories(folderInBackup);
+                    } catch (IOException e) {
+                        System.err.println("The backup couldn't end properly, please try again: " + e.getMessage());
+                        return false;
+                    }
                 } else if (Files.isRegularFile(file)){
                     IOUtils.copyFile( finalOriginPath, file, finalBackupPath);
                 }

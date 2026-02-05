@@ -22,25 +22,36 @@ public class RestoreManager {
 
         Path finalBackupPath = config.getBackupPath().resolve(version.getFolderName());
 
-        //Validates if backup folder exists
+        //Validates if game folder inside the backup folder exists
         if (!Files.exists(finalBackupPath)){
             System.err.println("Backup folder not found: " + finalBackupPath);
             return false;
         }
         //Validates if origin folder exists
         if (!Files.exists(finalOriginPath)){
-            System.err.println("Origin folder not found: " + finalOriginPath);
-            return false;
+            System.out.println("Origin directory couldn't be found");
+            System.out.println("Creating directory...");
+            try {
+                Files.createDirectories(finalOriginPath);
+                System.out.println("Directory created: " + finalOriginPath);
+            } catch (IOException e) {
+                System.err.println("Failed creating needed directory: " + e.getMessage());
+                return false;
+            }
         }
         //Copies each file from backup folder to origin folder
         try (Stream<Path> saveFiles = Files.walk(finalBackupPath,2)) {
             List<Path> filesToCopy = saveFiles.filter(IOUtils::isTBoIFile).toList();
             System.out.println("Restoring from backup...");
-            //todo: add trycatch to create directory
             for (Path file : filesToCopy) {
                 if (Files.isDirectory(file)){
                     Path folderInOrigin = finalOriginPath.resolve(file.getFileName());
-                    Files.createDirectories(folderInOrigin);
+                    try {
+                        Files.createDirectories(folderInOrigin);
+                    } catch (IOException e) {
+                        System.err.println("Restoring couldn't end properly, try again: " + e.getMessage());
+                        return false;
+                    }
                 } else if (Files.isRegularFile(file)){
                     IOUtils.copyFile(finalBackupPath, file, finalOriginPath);
                 }
