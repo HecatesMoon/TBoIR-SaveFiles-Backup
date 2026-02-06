@@ -1,6 +1,7 @@
 package com.isaac.ui;
 
 import java.util.Scanner;
+import java.util.function.Predicate;
 
 import com.isaac.Config;
 import com.isaac.service.GameVersion;
@@ -90,162 +91,35 @@ public class CLI {
     }
 
     private void gameVersionOptions (String optionChoosen, String action){
+        
+        int optionChoosenInt = 0;
+        GameVersion[] versions = GameVersion.values();
+        Predicate<GameVersion> operation = (action.equals("backup")) ? saveManager::backup : restoreManager::restore;
+        
+        
+        if (optionChoosen.matches("\\d+")) {
+            optionChoosenInt = Integer.parseInt(optionChoosen);
+        } 
 
-        if (action == "backup"){
-            switch (optionChoosen) {
-                case "1": //closes menu
-                    pickGameVersionRuns = false;
-                    break;
-                case "2": //all tboi ver //todo: make a way to know which version are installed, like checking for folders on start
-                    if (saveManager.backup(GameVersion.REBIRTH)) {
-                        System.out.println("The Binding of Isaac Rebirth Backup was succesfully done.");
-                    } else {
-                        System.out.println("There was an error while trying to backup The Binding of Isaac Rebirth");
-                    }
-                    if (saveManager.backup(GameVersion.AFTERBIRTH)) {
-                        System.out.println("The Binding of Isaac Afterbirth Backup was succesfully done.");
-                    } else {
-                        System.out.println("There was an error while trying to backup The Binding of Isaac Afterbirth");
-                    }
-                    if (saveManager.backup(GameVersion.AFTERBIRTH_PLUS)) {
-                        System.out.println("The Binding of Isaac Afterbirth+ Backup was succesfully done.");
-                    } else {
-                        System.out.println("There was an error while trying to backup The Binding of Isaac Afterbirth+");
-                    }
-                    if (saveManager.backup(GameVersion.REPENTANCE)) {
-                        System.out.println("The Binding of Isaac Repentance Backup was succesfully done.");
-                    } else {
-                        System.out.println("There was an error while trying to backup The Binding of Isaac Repentance");
-                    }
-                    if (saveManager.backup(GameVersion.REPENTANCE_PLUS)) {
-                        System.out.println("The Binding of Isaac Repentance+ Backup was succesfully done.");
-                    } else {
-                        System.out.println("There was an error while trying to backup The Binding of Isaac Repentance+");
-                    }
-                    pickGameVersionRuns = false;
-                    break;
-                case "3": //tboit rebirth
-                    if (saveManager.backup(GameVersion.REBIRTH)) {
-                        System.out.println("The Binding of Isaac Rebirth Backup was succesfully done.");
-                    } else {
-                        System.out.println("There was an error while trying to backup");
-                    }
-                    pickGameVersionRuns = false;
-                    break;
-                case "4": //tboi afterbirth
-                    if (saveManager.backup(GameVersion.AFTERBIRTH)) {
-                        System.out.println("The Binding of Isaac Afterbirth Backup was succesfully done.");
-                    } else {
-                        System.out.println("There was an error while trying to backup");
-                    }
-                    pickGameVersionRuns = false;
-                    break;
-                case "5": //tboi afterbirth+
-                    if (saveManager.backup(GameVersion.AFTERBIRTH_PLUS)) {
-                        System.out.println("The Binding of Isaac Afterbirth+ Backup was succesfully done.");
-                    } else {
-                        System.out.println("There was an error while trying to backup");
-                    }
-                    pickGameVersionRuns = false;
-                    break;
-                case "6": //tboi repentance
-                    if (saveManager.backup(GameVersion.REPENTANCE)) {
-                        System.out.println("The Binding of Isaac Repentance Backup was succesfully done.");
-                    } else {
-                        System.out.println("There was an error while trying to backup");
-                    }
-                    pickGameVersionRuns = false;
-                    break;
-                case "7": //tboi repentance+
-                    if (saveManager.backup(GameVersion.REPENTANCE_PLUS)) {
-                        System.out.println("The Binding of Isaac Repentance+ Backup was succesfully done.");
-                    } else {
-                        System.out.println("There was an error while trying to backup");
-                    }
-                    pickGameVersionRuns = false;
-                    break;
-                default:
-                    System.out.println("Write a valid number");
-                    break;
-            }
-        } else if (action == "restore"){
-            switch (optionChoosen) {
-                case "1": //closes menu
-                    pickGameVersionRuns = false;
-                    break;
-                case "2": //all tboi ver //todo: make a way to know which version are installed, like checking for folders on start
-                    if (restoreManager.restore(GameVersion.REBIRTH)) {
-                        System.out.println("The Binding of Isaac Rebirth savefiles were succesfully restored.");
-                    } else {
-                        System.out.println("There was an error while trying to restore The Binding of Isaac Rebirth savefiles");
-                    }
-                    if (restoreManager.restore(GameVersion.AFTERBIRTH)) {
-                        System.out.println("The Binding of Isaac Afterbirth savefiles were succesfully restored.");
-                    } else {
-                        System.out.println("There was an error while trying to restore The Binding of Isaac Afterbirth savefiles");
-                    }
-                    if (restoreManager.restore(GameVersion.AFTERBIRTH_PLUS)) {
-                        System.out.println("The Binding of Isaac Afterbirth+ savefiles were succesfully restored.");
-                    } else {
-                        System.out.println("There was an error while trying to restore The Binding of Isaac Afterbirth+ savefiles");
-                    }
-                    if (restoreManager.restore(GameVersion.REPENTANCE)) {
-                        System.out.println("The Binding of Isaac Repentance savefiles were succesfully restored.");
-                    } else {
-                        System.out.println("There was an error while trying to restore The Binding of Isaac Repentance savefiles");
-                    }
-                    if (restoreManager.restore(GameVersion.REPENTANCE_PLUS)) {
-                        System.out.println("The Binding of Isaac Repentance+ savefiles were succesfully restored.");
-                    } else {
-                        System.out.println("There was an error while trying to restore The Binding of Isaac Repentance+ savefiles");
-                    }
-                    pickGameVersionRuns = false;
-                    break;
-                case "3": //tboit rebirth
-                    if (restoreManager.restore(GameVersion.REBIRTH)) {
-                        System.out.println("The Binding of Isaac Rebirth savefiles were succesfully restored.");
-                    } else {
-                        System.out.println("There was an error while trying to restore the savefiles");
-                    }
-                    pickGameVersionRuns = false;
-                    break;
-                case "4": //tboi afterbirth
-                    if (restoreManager.restore(GameVersion.AFTERBIRTH)) {
-                        System.out.println("The Binding of Isaac Afterbirth savefiles were succesfully restored.");
-                    } else {
-                        System.out.println("There was an error while trying to restore the savefiles");
-                    }
-                    pickGameVersionRuns = false;
-                    break;
-                case "5": //tboi afterbirth+
-                    if (restoreManager.restore(GameVersion.AFTERBIRTH_PLUS)) {
-                        System.out.println("The Binding of Isaac Afterbirth+ savefiles were succesfully restored.");
-                    } else {
-                        System.out.println("There was an error while trying to restore the savefiles");
-                    }
-                    pickGameVersionRuns = false;
-                    break;
-                case "6": //tboi repentance
-                    if (restoreManager.restore(GameVersion.REPENTANCE)) {
-                        System.out.println("The Binding of Isaac Repentance savefiles were succesfully restored.");
-                    } else {
-                        System.out.println("There was an error while trying to restore the savefiles");
-                    }
-                    pickGameVersionRuns = false;
-                    break;
-                case "7": //tboi repentance+
-                    if (restoreManager.restore(GameVersion.REPENTANCE_PLUS)) {
-                        System.out.println("The Binding of Isaac Repentance+ savefiles were succesfully restored.");
-                    } else {
-                        System.out.println("There was an error while trying to restore the savefiles");
-                    }
-                    pickGameVersionRuns = false;
-                    break;
-                default:
-                    System.out.println("Write a valid number");
-                    break;
-            }
+        if (optionChoosenInt > 2 && optionChoosenInt <= versions.length+2){
+                executeOperation(versions[optionChoosenInt-3], operation, action);
         }
+
+        switch (optionChoosen) {
+            case "1": //closes menu
+                pickGameVersionRuns = false;
+                break;
+            case "2": //all tboi ver //todo: make a way to know which version are installed, like checking for folders on start
+                for (GameVersion v : versions){
+                    executeOperation(v, operation, action);
+                }
+                pickGameVersionRuns = false;
+                break;
+            default:
+                System.out.println("Write a valid number");
+                break;
+        }
+
     }
 
     private void pathChangeLoop(){
@@ -340,6 +214,14 @@ public class CLI {
             default:
                 System.out.println("The menu you called doesn't exist.");
                 break;
+        }
+    }
+
+    private void executeOperation(GameVersion version, Predicate<GameVersion> task, String taskName){
+        if (task.test(version)){
+            System.out.println(version.getName() + " "+ taskName + " was succesful");
+        } else {
+            System.out.println("There was an error while trying to " + taskName + " " + version.getName() + " savefiles");
         }
     }
 

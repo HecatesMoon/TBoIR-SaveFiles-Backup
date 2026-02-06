@@ -32,5 +32,9 @@ public enum GameVersion {
 
         throw new UnsupportedOperationException("Operative System not detected, or not supported.");
     } 
+
+    public String getName (){
+        return winFolder;
+    }
 }
     
