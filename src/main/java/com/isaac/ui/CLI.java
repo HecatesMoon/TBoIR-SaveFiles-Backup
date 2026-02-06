@@ -176,13 +176,14 @@ public class CLI {
         System.out.println("Input the path you want to use for origin");
         System.out.print(">");
 
+        //todo: consider being more specific in errors when changing paths
         switch (choosenOptionInt) {
             case 1:// changes origin path
                 if (config.setOriginPath(this.scanner.nextLine().trim())){
                     System.out.println("The origin path was changed succesfully");
                     System.out.println(config.getOriginPath());
                 } else {
-                    System.out.println("The path couldn't be changed, the path does not exist or is not writeable");
+                    System.out.println("The path couldn't be changed, the path does not exist, is not writeable or is blank");
                 }
                 break;
             case 2:// changes backup path
@@ -190,7 +191,7 @@ public class CLI {
                     System.out.println("The backup path was changed succesfully");
                     System.out.println(config.getBackupPath());
                 } else {
-                    System.out.println("The path couldn't be changed, the path does not exist or is not writeable");
+                    System.out.println("The path couldn't be changed, the path does not exist, is not writeable or is blank");
                 }
                 break;
             case 3://closes submenu

@@ -93,6 +93,10 @@ public class Config {
 
     public boolean setOriginPath(String newOriginPath) {
 
+        if (newOriginPath.isBlank()){
+            return false;
+        }
+
         Path newPath = Path.of(newOriginPath);
 
         if (newPath.toFile().isDirectory() && Files.isWritable(newPath)){
@@ -106,6 +110,11 @@ public class Config {
     }
 
     public boolean setBackupPath(String newBackupPath) {
+        
+        if (newBackupPath.isBlank()){
+            return false;
+        }
+        
         Path newPath = Path.of(newBackupPath);
 
         if (newPath.toFile().isDirectory() && Files.isWritable(newPath)){
