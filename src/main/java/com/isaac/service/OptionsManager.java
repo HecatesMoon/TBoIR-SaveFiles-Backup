@@ -29,6 +29,28 @@ public class OptionsManager {
         }
     }
 
+    public OperationResult getSteamCloudStatus(GameVersion version){
+        
+        String steamCloudLine;
+
+        try {
+            steamCloudLine = Files.readAllLines(getOptionsPath(version)).stream().filter(line -> line.toLowerCase().trim().startsWith("steamcloud")).findFirst().orElse("not found");
+        } catch (IOException e) {
+            return new OperationResult(false, "Couldn't access file");
+        }
+
+        if (steamCloudLine.equals("not found")){
+            return new OperationResult(false, "options.ini not found");
+        } 
+
+        if (steamCloudLine.replace(" ", "").toLowerCase().equals("steamcloud=1")){
+            return new OperationResult(true, "SteamCloud is on");
+        } else {
+            return new OperationResult(true, "SteamCloud is off");
+            
+        }
+    }
+
     private boolean isSteamCloudOn(GameVersion version) throws IOException{
 
         Path optionFile = getOptionsPath(version);
