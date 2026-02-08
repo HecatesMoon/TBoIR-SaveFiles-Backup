@@ -19,7 +19,7 @@ public class SaveManager {
 
     public OperationResult backup(GameVersion version){
 
-        Path finalOriginPath = config.getOriginPath().resolve(config.ProtonUsageCheck(version));
+        Path finalOriginPath = config.getOriginPath().resolve(config.resolveProtonPath(version));
 
         Path finalBackupPath = config.getBackupPath().resolve(version.getFolderName());
 

@@ -141,7 +141,7 @@ public class Config {
         return BACKUP_PATH;
     }
     //it checks if it needs to add to the path the proton prefix
-    public Path ProtonUsageCheck(GameVersion version){
+    public Path resolveProtonPath(GameVersion version){
         Path protonPrefix = Path.of("Steam", "steamapps", "compatdata", "250900", "pfx", "drive_c", "users", "steamuser", "Documents", "My Games");
         Path gameFolder = version.getFolderName();
         if ((version == GameVersion.REPENTANCE || version == GameVersion.REPENTANCE_PLUS) && Config.isLinux){
