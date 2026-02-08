@@ -6,6 +6,7 @@ import java.util.function.Predicate;
 import com.isaac.Config;
 import com.isaac.service.GameVersion;
 import com.isaac.service.IOUtils;
+import com.isaac.service.OperationResult;
 import com.isaac.service.RestoreManager;
 import com.isaac.service.SaveManager;
 
@@ -179,20 +180,10 @@ public class CLI {
         //todo: consider being more specific in errors when changing paths
         switch (choosenOptionInt) {
             case 1:// changes origin path
-                if (config.setOriginPath(this.scanner.nextLine().trim())){
-                    System.out.println("The origin path was changed succesfully");
-                    System.out.println(config.getOriginPath());
-                } else {
-                    System.out.println("The path couldn't be changed, the path does not exist, is not writeable or is blank");
-                }
+                showChangePathResult(config.setOriginPath(this.scanner.nextLine().trim()));
                 break;
             case 2:// changes backup path
-                if (config.setBackupPath(this.scanner.nextLine().trim())){
-                    System.out.println("The backup path was changed succesfully");
-                    System.out.println(config.getBackupPath());
-                } else {
-                    System.out.println("The path couldn't be changed, the path does not exist, is not writeable or is blank");
-                }
+                showChangePathResult(config.setBackupPath(this.scanner.nextLine().trim()));
                 break;
             case 3://closes submenu
                 System.out.println("Going back to main menu");
@@ -247,6 +238,14 @@ public class CLI {
             System.out.println(version.getName() + " "+ taskName + " was succesful");
         } else {
             System.out.println("There was an error while trying to " + taskName + " " + version.getName() + " savefiles");
+        }
+    }
+
+    private void showChangePathResult (OperationResult operation){
+        if (operation.getSuccess()){
+            System.out.println("Success: " + operation.getMessage());
+        } else {
+            System.out.println("The path couldn't be changed: " + operation.getMessage());
         }
     }
 

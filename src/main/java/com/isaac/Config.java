@@ -8,6 +8,7 @@ import java.nio.file.Path;
 import java.util.Properties;
 
 import com.isaac.service.GameVersion;
+import com.isaac.service.OperationResult;
 
 public class Config {
 
@@ -91,40 +92,46 @@ public class Config {
         throw new UnsupportedOperationException("Unsupported Operative System " + OS_NAME);
     }
 
-    public boolean setOriginPath(String newOriginPath) {
+    public OperationResult setOriginPath(String newOriginPath) {
 
         if (newOriginPath.isBlank()){
-            return false;
+            return new OperationResult(false, "the path is blank");
         }
 
         Path newPath = Path.of(newOriginPath);
 
-        if (newPath.toFile().isDirectory() && Files.isWritable(newPath)){
-            ORIGIN_PATH = newPath;
-            configs.setProperty("ORIGIN_PATH", newOriginPath);
-            storeProperties();
-            return true;
-        } else {
-            return false;
+        if (!newPath.toFile().isDirectory()){
+            return new OperationResult(false, "the path is not a directory");
         }
+        if (!Files.isWritable(newPath)){
+            return new OperationResult(false, "the path is not writable");
+        }
+
+        ORIGIN_PATH = newPath;
+        configs.setProperty("ORIGIN_PATH", newOriginPath);
+        storeProperties();
+        return new OperationResult(true, "origin path changed successfully");
     }
 
-    public boolean setBackupPath(String newBackupPath) {
+    public OperationResult setBackupPath(String newBackupPath) {
         
         if (newBackupPath.isBlank()){
-            return false;
+            return new OperationResult(false, "the path is blank");
         }
         
         Path newPath = Path.of(newBackupPath);
 
-        if (newPath.toFile().isDirectory() && Files.isWritable(newPath)){
-            BACKUP_PATH = newPath;
-            configs.setProperty("BACKUP_PATH", newBackupPath);
-            storeProperties();
-            return true;
-        } else {
-            return false;
+        if (!newPath.toFile().isDirectory()){
+            return new OperationResult(false, "the path is not a directory");
+        } 
+        if (!Files.isWritable(newPath)){
+            return new OperationResult(false, "the path is not writable");
         }
+
+        BACKUP_PATH = newPath;
+        configs.setProperty("BACKUP_PATH", newBackupPath);
+        storeProperties();
+        return new OperationResult(true, "backup path changed successfully");
     }
 
     public Path getOriginPath() {
