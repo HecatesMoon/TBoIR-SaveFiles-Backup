@@ -45,6 +45,8 @@ public class Config {
             configs.load(fis);
         } catch (IOException e){
             System.err.println("Failed trying to read config.properties: " + e.getMessage());
+            System.err.println("Loading defaults");
+            setDefaultsForProperties();
         }
     }
     //method that setups a fos and saves the properties in a config file
@@ -60,13 +62,11 @@ public class Config {
     private void init(){
 
         if (!Files.exists(CONFIG_FILE)){
-            configs.setProperty("ORIGIN_PATH", DEFAULT_ORIGIN_PATH.toString());
-            configs.setProperty("BACKUP_PATH", DEFAULT_BACKUP_PATH.toString());
+            setDefaultsForProperties();
             storeProperties();
+        } else {
+            loadProperties();
         }
-        
-        //TODO: add defaults as exception is catched
-        loadProperties();
 
         ORIGIN_PATH = Path.of(configs.getProperty("ORIGIN_PATH", DEFAULT_ORIGIN_PATH.toString()));
         BACKUP_PATH = Path.of(configs.getProperty("BACKUP_PATH", DEFAULT_BACKUP_PATH.toString()));
@@ -90,6 +90,11 @@ public class Config {
         } 
 
         throw new UnsupportedOperationException("Unsupported Operative System " + OS_NAME);
+    }
+
+    private void setDefaultsForProperties(){
+        configs.setProperty("ORIGIN_PATH", DEFAULT_ORIGIN_PATH.toString());
+        configs.setProperty("BACKUP_PATH", DEFAULT_BACKUP_PATH.toString());
     }
 
     public OperationResult setOriginPath(String newOriginPath) {
