@@ -105,6 +105,10 @@ public class Config {
 
         Path newPath = Path.of(newOriginPath);
 
+        if (newPath.toAbsolutePath().normalize().equals(ORIGIN_PATH.toAbsolutePath().normalize())){
+            return new OperationResult(false, "you are already using this path");
+        }
+
         if (!newPath.toFile().isDirectory()){
             return new OperationResult(false, "the path is not a directory");
         }
@@ -125,6 +129,10 @@ public class Config {
         }
         
         Path newPath = Path.of(newBackupPath);
+
+        if (newPath.toAbsolutePath().normalize().equals(BACKUP_PATH.toAbsolutePath().normalize())){
+            return new OperationResult(false, "you are already using this path");
+        }
 
         if (!newPath.toFile().isDirectory()){
             return new OperationResult(false, "the path is not a directory");
