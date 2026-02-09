@@ -93,7 +93,7 @@ public class CLI {
         pickGameVersionRuns = true;
 
         while (pickGameVersionRuns) {
-            if (!action.equals("toggleSteamVersion")){
+            if (!action.equals("steamcloud")){
                 System.out.println("-SELECT THE GAME VERSION-");
                 System.out.println("Which game version do you want to use to " + action.toUpperCase() + "?");
                 printMenu("gameversion");
