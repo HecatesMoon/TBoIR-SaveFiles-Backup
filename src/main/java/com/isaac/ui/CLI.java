@@ -52,7 +52,7 @@ public class CLI {
 
     private void menuOption(String choosenOption){
 
-        Integer choosenOptionInt;
+        int choosenOptionInt;
 
         try {
             choosenOptionInt = IOUtils.checkNumberInput(choosenOption);
@@ -193,7 +193,7 @@ public class CLI {
 
     private void changePath(String choosenOption){
             
-        Integer choosenOptionInt;
+        int choosenOptionInt;
 
         try {
             choosenOptionInt = IOUtils.checkNumberInput(choosenOption);
