@@ -1,5 +1,6 @@
 package com.isaac.ui;
 
+import java.lang.runtime.SwitchBootstraps;
 import java.util.Scanner;
 import java.util.function.Function;
 
@@ -94,13 +95,14 @@ public class CLI {
         pickGameVersionRuns = true;
 
         while (pickGameVersionRuns) {
-            if (action != Action.TOGGLE_STEAMCLOUD){
-                System.out.println("-SELECT THE GAME VERSION-");
-                System.out.println("Which game version do you want to use to " + action.getName() + "?");
-                printMenu(Menu.GAME_VERSION);
-            } else {
-                System.out.println("Select the game to toggle SteamCloud in options.ini");
+
+            System.out.println("-SELECT THE GAME VERSION-");
+            System.out.println("Which game version do you want to use to " + action.getName() + "?");
+
+            if (action == Action.TOGGLE_STEAMCLOUD){
                 printMenu(Menu.STEAM_CLOUD_TOGGLE);
+            } else {
+                printMenu(Menu.GAME_VERSION);
             }
 
             System.out.print("> ");
@@ -124,14 +126,14 @@ public class CLI {
             System.err.println("Invalid input, number is out of limits: " + e.getMessage());
             optionChoosenInt = -1;
         }
-
-        //TODO: CLEAN METHOD FROM INVASORS (STEAM CLOUD)
         
         int maxOption = GameVersion.values().length + 1;
 
         if (action == Action.BACKUP || action == Action.RESTORE){
             maxOption++;
         }
+
+        // checks if number is valid
         if (optionChoosenInt < 0 || optionChoosenInt > maxOption){
             System.out.println("Write a valid number");
             return;
@@ -140,29 +142,37 @@ public class CLI {
         GameVersion[] versions = GameVersion.values();
         Function<GameVersion, OperationResult> operation = v -> new OperationResult(true, "No action selected");
         
-        if (action == Action.BACKUP){
+        switch (action) {
+            case Action.BACKUP:
             operation = saveManager::backup;
-        } else if (action == Action.RESTORE) {
+                break;
+            case Action.RESTORE:
             operation = restoreManager::restore;
-        } else if (action == Action.TOGGLE_STEAMCLOUD) {
+                break;
+            case Action.TOGGLE_STEAMCLOUD:
             operation = optionsManager::switchSteamCloud;
+                break;
+            default:
+            System.out.println("Unknown action: " + action.name());
+                break;
         }
 
+        //exit menu
         if (optionChoosenInt == 0){
             pickGameVersionRuns = false;
             return;
         }
+        //apply operation to all
         if (optionChoosenInt == 6 && action != Action.TOGGLE_STEAMCLOUD){
-            for (GameVersion v : versions){
-                    executeOperation(v, operation, action);
-                    System.out.println();
-            }
+            executeOperationForAll(action, operation);
             pickGameVersionRuns = false;
             return;
         }
+        //execute operation to selected game
         if ((optionChoosenInt >= 1) && (optionChoosenInt <= versions.length)){
             executeOperation(versions[optionChoosenInt-1], operation, action);
             pickGameVersionRuns = false;
+            return;
         }
     }
 
@@ -268,7 +278,7 @@ public class CLI {
                 System.out.println("What do you want to do? (press the number and then enter)");
                 break;
             default:
-                System.out.println("Unkown menu option: " + menu.name());
+                System.out.println("Unknown menu option: " + menu.name());
                 break;
         }
     }
@@ -287,6 +297,13 @@ public class CLI {
                 }
             }
         }
+    }
+
+    private void executeOperationForAll(Action action, Function<GameVersion, OperationResult> operation){
+        for (GameVersion v : GameVersion.values()){
+                    executeOperation(v, operation, action);
+                    System.out.println();
+            }
     }
 
     private void showChangePathResult (OperationResult operation){
