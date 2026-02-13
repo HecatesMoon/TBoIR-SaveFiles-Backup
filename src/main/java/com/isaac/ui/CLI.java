@@ -1,6 +1,5 @@
 package com.isaac.ui;
 
-import java.lang.runtime.SwitchBootstraps;
 import java.util.Scanner;
 import java.util.function.Function;
 
