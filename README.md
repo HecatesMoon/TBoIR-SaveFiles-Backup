@@ -1,6 +1,6 @@
 # TBoIR Backup manager
 
-![Java](https://img.shields.io/badge/Java-25-orange) ![License](https://img.shields.io/badge/license-MIT-blue) ![Linux](https://img.shields.io/badge/Linux-FCC624?logo=linux&logoColor=black) ![Windows](https://img.shields.io/badge/Windows-0078D6?logo=windows&logoColor=white) ![macOS](https://img.shields.io/badge/macOS-000000?logo=apple&logoColor=white)
+![Java](https://img.shields.io/badge/Java-25-orange) ![License](https://img.shields.io/badge/license-MIT-blue) ![Windows](https://img.shields.io/badge/Windows-0078D6?logo=windows&logoColor=white) ![Linux](https://img.shields.io/badge/Linux-FCC624?logo=linux&logoColor=black)  ![macOS](https://img.shields.io/badge/macOS-000000?logo=apple&logoColor=white)
 
 CLI backup manager that saves/restores game files across TBoI versions, with batch operations and cloud disable.
 
