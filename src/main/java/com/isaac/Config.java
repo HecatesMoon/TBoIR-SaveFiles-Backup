@@ -5,9 +5,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.EnumMap;
 import java.util.Properties;
 import java.util.stream.Stream;
 
+import com.isaac.service.Action;
 import com.isaac.service.GameVersion;
 import com.isaac.service.OperationResult;
 
@@ -29,6 +31,9 @@ public class Config {
     
     private Path ORIGIN_PATH;
     private Path BACKUP_PATH;
+
+    public EnumMap<GameVersion, Boolean> isGameInOrigin = new EnumMap<>(GameVersion.class);
+    public EnumMap<GameVersion, Boolean> isGameInBackup = new EnumMap<>(GameVersion.class);
 
     public Config (){
         this.CONFIG_FILE = Path.of("config.properties");
@@ -84,6 +89,9 @@ public class Config {
 
         ORIGIN_PATH = Path.of(configs.getProperty("ORIGIN_PATH", DEFAULT_ORIGIN_PATH.toString()));
         BACKUP_PATH = Path.of(configs.getProperty("BACKUP_PATH", DEFAULT_BACKUP_PATH.toString()));
+
+        checkGamesAvailabilty(Action.BACKUP);
+        checkGamesAvailabilty(Action.RESTORE);
     
     }
 
@@ -220,5 +228,20 @@ public class Config {
             }
         }   
         return false;
+    }
+
+    private void checkGamesAvailabilty(Action action){
+
+        if(action != Action.BACKUP && action != Action.RESTORE) return;
+
+        Path pathToCheck = (action == Action.BACKUP)  ? ORIGIN_PATH : BACKUP_PATH ;
+
+        for (GameVersion version : GameVersion.values()){
+            if (action == Action.BACKUP) {
+                isGameInOrigin.put(version, (Files.exists(pathToCheck.resolve(version.getFolderName()))));
+            } else {
+                isGameInBackup.put(version, (Files.exists(pathToCheck.resolve(version.getFolderName()))));
+            }
+        }
     }
 }
