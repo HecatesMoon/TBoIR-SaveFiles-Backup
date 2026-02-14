@@ -68,6 +68,7 @@ public class Config {
             configs.store(fos, "Basic paths configs for Isaac Backup");
         } catch (IOException e) {
             System.err.println("Failed trying to store config.properties: " + e.getMessage());
+            System.out.println("WARNING: the updated config file will not save when the program is closed");
         }
     }
 
