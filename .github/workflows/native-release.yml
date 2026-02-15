@@ -1,4 +1,6 @@
 name: Build Native Images
+permissions:
+  contents: write
 
 on:
   release:
