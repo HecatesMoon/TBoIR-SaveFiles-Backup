@@ -82,7 +82,7 @@ jobs:
         run: |
           echo "📦 File generated: ${{ steps.rename.outputs.new_name }}"
            if [[ "${{ runner.os }}" == "Windows" ]]; then
-            dir target\ | findstr isaac
+            dir "target" | findstr "isaac" || echo "No se encontró el archivo con 'findstr'"
           else
             ls -la target/ | grep isaac || true
           fi
