@@ -1,0 +1,101 @@
+name: Build Native Images
+
+on:
+  release:
+    types: [created]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        include:
+          - os: ubuntu-latest
+            os_short: linux
+            extension: ''
+          - os: windows-latest
+            os_short: win
+            extension: .exe
+          - os: macos-latest
+            os_short: mac
+            extension: ''
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # 1. Get version and clean the 'v'
+      - name: Get version (without 'v')
+        id: version
+        run: |
+          if [[ "${{ github.event_name }}" == "release" ]]; then
+            RAW_VERSION="${{ github.ref_name }}"
+            CLEAN_VERSION="${RAW_VERSION#v}"
+            echo "version=$CLEAN_VERSION" >> $GITHUB_OUTPUT
+            echo "✅ Clean version: $CLEAN_VERSION (original: $RAW_VERSION)"
+          else
+            echo "version=snapshot" >> $GITHUB_OUTPUT
+            echo "✅ Manual mode: using 'snapshot'"
+          fi
+        shell: bash
+
+      # 2. GraalVM setup
+      - name: Setup GraalVM
+        uses: graalvm/setup-graalvm@v1
+        with:
+          java-version: '25'
+          distribution: 'graalvm'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      # 3. Compile with Maven
+      - name: Build with Maven
+        run: mvn clean package
+
+      # 4. Rename executable file with clean name
+      - name: Rename executable
+        id: rename
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          OS_SHORT="${{ matrix.os_short }}"
+          EXT="${{ matrix.extension }}"
+          ORIGINAL="target/isaac-backup-manager${EXT}"
+          NEW_NAME="isaac-backup-manager-${VERSION}-${OS_SHORT}${EXT}"
+          NEW_PATH="target/${NEW_NAME}"
+          
+          if [ -f "$ORIGINAL" ]; then
+            mv "$ORIGINAL" "$NEW_PATH"
+            echo "new_name=$NEW_NAME" >> $GITHUB_OUTPUT
+            echo "new_path=$NEW_PATH" >> $GITHUB_OUTPUT
+            echo "✅ Renaming to $NEW_NAME"
+          else
+            echo "❌ Couldn't find $ORIGINAL"
+            echo "Files in target/:"
+            ls -la target/
+            exit 1
+          fi
+        shell: bash
+
+      # 5. Show final result (for debugging)
+      - name: Show generated files
+        run: |
+          echo "📦 File generated: ${{ steps.rename.outputs.new_name }}"
+          ls -la target/ | grep isaac
+
+      # 6. Upload to release (only release)
+      - name: Upload to Release
+        if: github.event_name == 'release'
+        uses: softprops/action-gh-release@v1
+        with:
+          files: ${{ steps.rename.outputs.new_path }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # 7. Upload as artifact (manual test)
+      - name: Upload artifact (manual)
+        if: github.event_name != 'release'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.rename.outputs.new_name }}
+          path: ${{ steps.rename.outputs.new_path }}
