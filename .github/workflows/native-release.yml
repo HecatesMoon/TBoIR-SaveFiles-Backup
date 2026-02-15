@@ -4,7 +4,7 @@ permissions:
 
 on:
   release:
-    types: [created]
+    types: [published]
   workflow_dispatch:
 
 jobs:
@@ -95,6 +95,7 @@ jobs:
         if: github.event_name == 'release'
         uses: softprops/action-gh-release@v1
         with:
+          tag_name: ${{ github.ref_name }}
           files: ${{ steps.rename.outputs.new_path }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
