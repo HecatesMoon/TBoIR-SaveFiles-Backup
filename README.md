@@ -17,42 +17,53 @@ CLI backup manager that saves/restores game files across TBoI versions, with bat
 [<img src="screenshots/backup.png" width="620">](screenshots/backup.png)
 
 ## Requirements
-- Java 25 or higher
+- Windows, Linux or MacOS
 
 **Optional (for building a native-image):**
 - Maven (for compilation)
 - GraalVM (optional, for native-image)
+**Optional (To compile it yourself):**
+- Java 25 or higher
 
-## Installation
+## 📦 Installation
 
-### Download the native-image
-#### Linux
-1. download the native-image: `isaac-backup-manager`
-2. run it: `./isaac-backup-manager`
+### Quick start (recommended)
+1. Download the native-image for your OS from [Releases](https://github.com/HecatesMoon/TBoIR-Backup-Manager/releases)
+2. Run it:
+   - **Linux/macOS**: `chmod +x isaac-backup-manager-* && ./isaac-backup-manager-*`
+   - **Windows**: Double-click the `.exe` file
 
-### Compile with Java
-1. Clone: `git clone https://github.com/HecatesMoon/TBoIR-SaveFiles-Backup.git`
-2. Go to java folder `cd src/main/java`
-3. Compile program: `javac com/hecatesmoon/isaacbackupmanager/App.java`
-4. Go to back to main folder: `cd ../../..`
-5. Now you can run the program: `java -cp src/main/java com.hecatesmoon.isaacbackupmanager.App`
+### Build from source
+<details>
+<summary>Click to expand compilation options</summary>
 
-## You can also compile your own native-image with Maven and GraalVM
-1. Clone: `git clone https://github.com/HecatesMoon/TBoIR-SaveFiles-Backup.git`
-2. Use in main folder: `mvn clean package`
-3. find your native-image in `./target`
+**With Java only:**
+```bash
+git clone https://github.com/HecatesMoon/TBoIR-Backup-Manager.git
+cd src/main/java
+javac com/hecatesmoon/isaacbackupmanager/App.java
+cd ../../..
+java -cp src/main/java com.hecatesmoon.isaacbackupmanager.App
+```
+
+**With Maven (for native-image):**
+```bash
+git clone https://github.com/HecatesMoon/TBoIR-Backup-Manager.git
+cd TBoIR-Backup-Manager
+mvn clean package
+# Native image available in ./target/
+```
+</details>
 
 ## Tech Stack
 - Java 25
 - Maven
 - GraalVM native-image
+- Github actions
 
 ## Why did I do it
 I made this project because I found a great opportunity to practice Java, I always wanted to do a useful app from zero, and wanted to get comfortable with Java. 
 I also was playing The Binding of Isaac Rebirth and steam was overwriting my saves with empty saves, so I wanted something to save my games while not using steam cloud.
 
-## To-do List
-- GUI with JavaFX
-- Cloud integration
-- Automating processes
-- Make multiple backups
+## Updates
+I plan on updating the program, but It will take a while because I have to focus on other projects right now.
