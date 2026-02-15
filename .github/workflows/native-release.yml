@@ -81,7 +81,12 @@ jobs:
       - name: Show generated files
         run: |
           echo "📦 File generated: ${{ steps.rename.outputs.new_name }}"
-          ls -la target/ | grep isaac
+           if [[ "${{ runner.os }}" == "Windows" ]]; then
+            dir target\ | findstr isaac
+          else
+            ls -la target/ | grep isaac || true
+          fi
+        shell: bash
 
       # 6. Upload to release (only release)
       - name: Upload to Release
